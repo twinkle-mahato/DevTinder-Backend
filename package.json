@@ -1,0 +1,28 @@
+{
+  "name": "detinder",
+  "version": "1.0.0",
+  "description": "Tinder for devs",
+  "keywords": [
+    "backend",
+    "node.js"
+  ],
+  "homepage": "https://github.com/twinkle-mahato/DevTinder_Backend#readme",
+  "bugs": {
+    "url": "https://github.com/twinkle-mahato/DevTinder_Backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twinkle-mahato/DevTinder_Backend.git"
+  },
+  "license": "ISC",
+  "author": "Twinkle Mahato",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "run" : "node src/app.js",
+    "dev" : "nodemon src/app.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
