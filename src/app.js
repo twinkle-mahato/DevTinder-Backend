@@ -2,30 +2,28 @@ const express = require("express");
 
 const app = express();
 
-app.use("/hello/2", (req, res) => {
-  res.send("Abra Ka Dabra");
+// This will only  handle GET call  to /user
+app.get("/user", (req, res) => {
+  res.send({
+    firstname: "Twinkle",
+    lastName: "Mahato",
+  });
 });
 
-app.use("/hello", (req, res) => {
-  res.send("Hello Hello Hello!!!");
+app.post("/user", (req, res) => {
+  // data save successfully
+  res.send("Data successfully send to the database !!");
 });
 
-// "/hello" over write the "/hello/2" that is why we go to this path it alwasy showing hello hello hello!! so we need to write this route "/hello/2" before "/hello" so it wont overwrite
+app.delete("/user", (req, res) => {
+  res.send("Deleted Successfully");
+})
 
-// app.use("/hello/2", (req, res) => {
-//   res.send("Abra Ka Dabra");
-// });
-
+// This Match all the HTTP methods API calls to /test
 app.use("/test", (req, res) => {
   res.send("Hello from server!!!");
 });
 
-app.use("/", (req, res) => {
-  res.send("Namaste Akshay!!!");
-});
-
-
 app.listen(7777, () => {
   console.log("Server Listening on port 7777");
 });
-
