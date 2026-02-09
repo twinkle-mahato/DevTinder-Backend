@@ -2,32 +2,31 @@ const express = require("express");
 
 const app = express();
 
-const { adminAuth, userAuth } = require("./utils/auth");
 
-// Apply authorization middleware to all routes that start with "/admin"
-app.use("/admin", adminAuth);
-
-//if you want to apply authorization to all "/user" routes
-//app.use("/user", userAuth);
-
-app.get("/user/login", (req, res, next) => {
-  res.send("User logged in successfully");
+app.use("/", (err, req, res, next) => {
+  if(err){
+    //log your error
+    res.status(500).send("Something went wrong");
+  }
 });
 
-// If we want to apply authorization to a specific route (not for all routes),
-// we can pass the auth middleware only to that route.
-// The request will first go through `userAuth`, and only if authorization succeeds will it reach this route handler.
 
-app.get("/user", userAuth, (req, res, next) => {
-  res.send("User data send");
+app.get("/getUserData", (req, res) => {
+  //try{
+  //Logic of Db call and get user data
+  throw new error("cdxbnkjzxc");
+  res.send("User data sent");
+  //}
+  //catch(err){
+    //res.status(500).send("Write the error message here");
+ // }
 });
 
-app.get("/admin/getAllData", (req, res, next) => {
-  res.send("All data send");
-});
-
-app.get("/admin/deleteUser", (req, res, next) => {
-  res.send("Deleted a user");
+app.use("/", (err, req, res, next) => {
+  if(err){
+    //log your error
+    res.status(500).send("Something went wrong");
+  }
 });
 
 app.listen(7777, () => {
