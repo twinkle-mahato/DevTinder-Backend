@@ -7,6 +7,18 @@ const User = require("./models/user");
 //our middleware now be activated for all the routes
 app.use(express.json());
 
+app.post("/signup", async (req, res) => {
+  //creating a new instance of user model
+  console.log(req.body);
+  const user = new User(req.body);
+  try {
+    await user.save();
+    res.send("User added Successfully");
+  } catch (err) {
+    res.status(400).send("Error saving the user:" + err.message);
+  }
+});
+
 //Feed API -> GET/feed -get all the users from the database
 app.get("/feed", async (req, res) => {
   try {
@@ -49,15 +61,30 @@ app.get("/user", async (req, res) => {
   }
 });
 
-app.post("/signup", async (req, res) => {
-  //creating a new instance of user model
-  console.log(req.body);
-  const user = new User(req.body);
+// delete user
+app.delete("/delete", async (req, res) => {
+  const userId = req?.body?.userId;
   try {
-    await user.save();
-    res.send("User added Successfully");
+    const user = await User.findByIdAndDelete(userId);
+    res.send("User deleted successfully");
   } catch (err) {
-    res.status(400).send("Error saving the user:" + err.message);
+    res.status(400).send("Something went wrong");
+  }
+});
+
+// Update data of the user
+app.patch("/update", async (req, res) => {
+  const userId = req?.body?.userId;
+  //after find the id then we update some data that is in the json request body
+  const data = req?.body;
+  try {
+    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: "before", // it will return me the document before update , 3rd parameter as a options for this method, if use after then give the after update data
+    });
+    console.log(user);
+    res.send("User updated Successfully");
+  } catch (err) {
+    res.status(400).send("Something went wrong");
   }
 });
 
