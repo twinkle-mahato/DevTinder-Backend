@@ -73,11 +73,22 @@ app.delete("/delete", async (req, res) => {
 });
 
 // Update data of the user
-app.patch("/update", async (req, res) => {
-  const userId = req?.body?.userId;
+app.patch("/update/:userId", async (req, res) => {
+  const userId = req?.params?.userId;
   //after find the id then we update some data that is in the json request body
   const data = req?.body;
   try {
+    const ALLOWED_UPDATES = ["photoUrl", "skilss", "about", "age", "gender"];
+    const isUpdateAllowed = Object.keys(data).every((k) =>
+      ALLOWED_UPDATES.includes(k),
+    );
+    if (!isUpdateAllowed) {
+      throw new Error("Update not allowed");
+    }
+    if (data?.skills.length > 10) {
+      throw new Error("Skills Can not be more than 10");
+    }
+
     const user = await User.findByIdAndUpdate({ _id: userId }, data, {
       returnDocument: "before", // it will return me the document before update , 3rd parameter as a options for this method, if use after then give the after update data
       runValidators: true,
@@ -85,7 +96,7 @@ app.patch("/update", async (req, res) => {
     console.log(user);
     res.send("User updated Successfully");
   } catch (err) {
-    res.status(400).send("Something went wrong!!");
+    res.status(400).send("UPDATE FAILED:" + err.message);
   }
 });
 
