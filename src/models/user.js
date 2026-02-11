@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator")
 
 const userSchema = mongoose.Schema(
   {
@@ -17,10 +18,20 @@ const userSchema = mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Email is not valid:" + value);
+        }
+      },
     },
     password: {
       type: String,
       required: true,
+       validate(value) {
+        if (!validator.isStrongPassword(value)) {
+          throw new Error("Enter a Strong Password :" + value);
+        }
+      }
     },
     age: {
       type: Number,
@@ -43,6 +54,11 @@ const userSchema = mongoose.Schema(
       type: String,
       default:
         "https://st2.depositphotos.com/9998432/48297/v/1600/depositphotos_482974552-stock-illustration-default-avatar-photo-placeholder-grey.jpg",
+          validate(value) {
+        if ( value && !validator.isURL(value)) {
+          throw new Error("Photo URL is not valid:" + value);
+        }
+      },
     },
     skills: {
       type: [String],
