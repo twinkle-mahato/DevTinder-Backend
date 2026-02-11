@@ -80,11 +80,12 @@ app.patch("/update", async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate({ _id: userId }, data, {
       returnDocument: "before", // it will return me the document before update , 3rd parameter as a options for this method, if use after then give the after update data
+      runValidators: true,
     });
     console.log(user);
     res.send("User updated Successfully");
   } catch (err) {
-    res.status(400).send("Something went wrong");
+    res.status(400).send("Something went wrong!!");
   }
 });
 
