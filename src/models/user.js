@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
-const validator = require("validator")
+const validator = require("validator");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const userSchema = mongoose.Schema(
   {
@@ -27,11 +29,11 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: true,
-       validate(value) {
+      validate(value) {
         if (!validator.isStrongPassword(value)) {
           throw new Error("Enter a Strong Password :" + value);
         }
-      }
+      },
     },
     age: {
       type: Number,
@@ -54,8 +56,8 @@ const userSchema = mongoose.Schema(
       type: String,
       default:
         "https://st2.depositphotos.com/9998432/48297/v/1600/depositphotos_482974552-stock-illustration-default-avatar-photo-placeholder-grey.jpg",
-          validate(value) {
-        if ( value && !validator.isURL(value)) {
+      validate(value) {
+        if (value && !validator.isURL(value)) {
           throw new Error("Photo URL is not valid:" + value);
         }
       },
@@ -68,6 +70,25 @@ const userSchema = mongoose.Schema(
     timestamps: true,
   },
 );
+
+userSchema.methods.getJWT = async function () {
+  const user = this;
+  const token = await jwt.sign({ _id: user._id }, "Dev#Tinder@123", {
+    expiresIn: "7d",
+  });
+  return token;
+};
+
+userSchema.methods.validatePassword = async function (passwordInputByUser) {
+  const user = this;
+  const passwordHash = user.password; //this password stored in db which is encrypted
+
+  const isPasswordValid = await bcrypt.compare(
+    passwordInputByUser,
+    passwordHash,
+  );
+  return isPasswordValid;
+};
 
 // const User = mongoose.model("User", userSchema);
 // module.exports = User;

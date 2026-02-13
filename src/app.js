@@ -4,6 +4,7 @@ const { validateSignupdata } = require("./utils/validation");
 const bcrypt = require("bcrypt");
 const cookieparser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const { userAuth } = require("./middlewares/auth");
 
 const app = express();
 const User = require("./models/user");
@@ -49,15 +50,18 @@ app.post("/login", async (req, res) => {
       throw new Error("Invalid Credentials");
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await user.validatePassword(password); // when user enter the password that password
 
     if (isPasswordValid) {
-      //create a JWt token
-      const token = await jwt.sign({ _id: user._id }, "Dev#Tinder@123");
+
+      //get JWt token
+      const token = await user.getJWT();
 
       // add the token to cookie and send the response back to the user
 
-      res.cookie("token", token);
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 8 * 3600000),
+      }); // here we pass the cookie name as a token and then pass the token
       res.send("User Logged In Successfully");
     } else {
       throw new Error("Invalid Credentials");
@@ -69,115 +73,23 @@ app.post("/login", async (req, res) => {
 
 //create profile API
 
-app.get("/profile", async (req, res) => {
+app.get("/profile", userAuth, async (req, res) => {
   try {
-  const cookies = req.cookies;
-  const { token } = cookies;
+    const user = req.user; // here i will just find the user from userAuth beause we attach the user with req
 
-  if(!token){
-    throw new Error("Invalid token");
-  }
-
-  //validate my token
-  const decodedMessage = jwt.verify(token, "Dev#Tinder@123");
-  //console.log(decodedMessage); // so the decodedMessage is what we hide, we hide the user._id
-
-  //now we extract the user._id from the decodedMessage
-  const { _id } = decodedMessage;
-  console.log("Logged in User is:" + _id);
-
-  const user = await User.findById(_id); // it will gives you the logged in user all details
-  //if the token is valid but the user does not exist
-  if(!user){
-    throw new Error("User does not exist");
-  }
-
-  //console.log(cookies); // here we got undefiend when we try to see the cookie from the request body
-  res.send(user);
-} catch(err){
- res.status(400).send("ERROR:" + err.message);
-}
-});
-
-//Feed API -> GET/feed -get all the users from the database
-app.get("/feed", async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.send(users);
+    //so the profile api just send back my user
+    res.send(user);
   } catch (err) {
-    res.status(400).send("Something went wrong");
+    res.status(400).send("ERROR:" + err.message);
   }
 });
 
-//GET more than one user have same email and we want to find only one user
-app.get("/user", async (req, res) => {
-  const userEmail = req?.body?.emailId;
-
-  try {
-    console.log(userEmail);
-    const user = await User.findOne({ emailId: userEmail });
-    if (!user) {
-      res.status(404).send("User Not found");
-    } else {
-      res.send(user);
-    }
-  } catch (err) {
-    res.status(400).send("Something went wrong");
-  }
-});
-
-//GET user by email
-app.get("/user", async (req, res) => {
-  const userEmail = req?.body?.emailId;
-  try {
-    const users = await User.find({ emailId: userEmail });
-    if (users.length === 0) {
-      res.status(404).send("User Not found");
-    } else {
-      res.send(users);
-    }
-  } catch (err) {
-    res.status(400).send("Something went wrong");
-  }
-});
-
-// delete user
-app.delete("/delete", async (req, res) => {
-  const userId = req?.body?.userId;
-  try {
-    const user = await User.findByIdAndDelete(userId);
-    res.send("User deleted successfully");
-  } catch (err) {
-    res.status(400).send("Something went wrong");
-  }
-});
-
-// Update data of the user
-app.patch("/update/:userId", async (req, res) => {
-  const userId = req?.params?.userId;
-  //after find the id then we update some data that is in the json request body
-  const data = req?.body;
-  try {
-    const ALLOWED_UPDATES = ["photoUrl", "skilss", "about", "age", "gender"];
-    const isUpdateAllowed = Object.keys(data).every((k) =>
-      ALLOWED_UPDATES.includes(k),
-    );
-    if (!isUpdateAllowed) {
-      throw new Error("Update not allowed");
-    }
-    if (data?.skills && data?.skills.length > 10) {
-      throw new Error("Skills Can not be more than 10");
-    }
-
-    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
-      returnDocument: "before", // it will return me the document before update , 3rd parameter as a options for this method, if use after then give the after update data
-      runValidators: true,
-    });
-    console.log(user);
-    res.send("User updated Successfully");
-  } catch (err) {
-    res.status(400).send("UPDATE FAILED:" + err.message);
-  }
+//sent connection request
+app.post("/sendConnectionRequest", userAuth, async (req, res) => {
+  //sending a connection request
+  const user = req.user;
+  console.log("Sending a connection request");
+  res.send(` ${user.firstName} sent the connection request!!`);
 });
 
 connectDB()
