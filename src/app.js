@@ -2,12 +2,15 @@ const express = require("express");
 const { connectDB } = require("./config/database");
 const { validateSignupdata } = require("./utils/validation");
 const bcrypt = require("bcrypt");
+const cookieparser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 const User = require("./models/user");
 
 //our middleware now be activated for all the routes
 app.use(express.json());
+app.use(cookieparser());
 
 app.post("/signup", async (req, res) => {
   try {
@@ -42,21 +45,58 @@ app.post("/login", async (req, res) => {
     const user = await User.findOne({ emailId: emailId });
 
     //if user not present
-    if(!user){
+    if (!user) {
       throw new Error("Invalid Credentials");
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if(isPasswordValid){
+    if (isPasswordValid) {
+      //create a JWt token
+      const token = await jwt.sign({ _id: user._id }, "Dev#Tinder@123");
+
+      // add the token to cookie and send the response back to the user
+
+      res.cookie("token", token);
       res.send("User Logged In Successfully");
-    }
-    else{
-      throw new Error ("Invalid Credentials");
+    } else {
+      throw new Error("Invalid Credentials");
     }
   } catch (err) {
     res.status(400).send("Error:" + err.message);
   }
+});
+
+//create profile API
+
+app.get("/profile", async (req, res) => {
+  try {
+  const cookies = req.cookies;
+  const { token } = cookies;
+
+  if(!token){
+    throw new Error("Invalid token");
+  }
+
+  //validate my token
+  const decodedMessage = jwt.verify(token, "Dev#Tinder@123");
+  //console.log(decodedMessage); // so the decodedMessage is what we hide, we hide the user._id
+
+  //now we extract the user._id from the decodedMessage
+  const { _id } = decodedMessage;
+  console.log("Logged in User is:" + _id);
+
+  const user = await User.findById(_id); // it will gives you the logged in user all details
+  //if the token is valid but the user does not exist
+  if(!user){
+    throw new Error("User does not exist");
+  }
+
+  //console.log(cookies); // here we got undefiend when we try to see the cookie from the request body
+  res.send(user);
+} catch(err){
+ res.status(400).send("ERROR:" + err.message);
+}
 });
 
 //Feed API -> GET/feed -get all the users from the database
