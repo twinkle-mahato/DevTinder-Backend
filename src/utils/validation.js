@@ -1,4 +1,5 @@
 const validator = require("validator");
+
 const validateSignupdata = (req) => {
   const { firstName, lastName, emailId, password } = req.body;
 
@@ -15,4 +16,22 @@ const validateSignupdata = (req) => {
   }
 };
 
-module.exports = { validateSignupdata };
+const validateEditProfileData = (req) => {
+  const allowedEditFields = [
+    "firstName",
+    "lastName",
+    "about",
+    "age",
+    "gender",
+    "skills",
+    "photoUrl",
+  ];
+
+  //i will loop through this request body
+  const isAllowed = Object.keys(req.body).every(
+    (field) => allowedEditFields.includes(field), // for every field i will check if my allowedEditFields includes that particular filed and if it is valid then only edit allowed.
+  );
+  return isAllowed;
+};
+
+module.exports = { validateSignupdata, validateEditProfileData };
