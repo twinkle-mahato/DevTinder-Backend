@@ -1,96 +1,21 @@
 const express = require("express");
 const { connectDB } = require("./config/database");
-const { validateSignupdata } = require("./utils/validation");
-const bcrypt = require("bcrypt");
-const cookieparser = require("cookie-parser");
-const jwt = require("jsonwebtoken");
-const { userAuth } = require("./middlewares/auth");
 
 const app = express();
-const User = require("./models/user");
+const cookieparser = require("cookie-parser");
 
 //our middleware now be activated for all the routes
-app.use(express.json());
-app.use(cookieparser());
+app.use(cookieparser()); // to read and parse cookies from incoming requests.
+app.use(express.json()); //parse incoming JSON request bodies and make the data accessible
 
-app.post("/signup", async (req, res) => {
-  try {
-    //validation of data
-    validateSignupdata(req);
+const authRouter = require("./routes/auth");
+const profileRouter = require("./routes/profile");
+const request = require("./routes/requests");
+const requestRouter = require("./routes/requests");
 
-    const { firstName, lastName, emailId, password } = req.body;
-    //Encrypt the password
-    const passwordHash = await bcrypt.hash(password, 10);
-    console.log(passwordHash);
-
-    //creating a new instance of user model
-    console.log(req.body);
-    const user = new User({
-      firstName,
-      lastName,
-      emailId,
-      password: passwordHash,
-    });
-    await user.save();
-    res.send("User added Successfully");
-  } catch (err) {
-    res.status(400).send("Error:" + err.message);
-  }
-});
-
-app.post("/login", async (req, res) => {
-  try {
-    const { emailId, password } = req.body;
-
-    //user valid or not so find first
-    const user = await User.findOne({ emailId: emailId });
-
-    //if user not present
-    if (!user) {
-      throw new Error("Invalid Credentials");
-    }
-
-    const isPasswordValid = await user.validatePassword(password); // when user enter the password that password
-
-    if (isPasswordValid) {
-
-      //get JWt token
-      const token = await user.getJWT();
-
-      // add the token to cookie and send the response back to the user
-
-      res.cookie("token", token, {
-        expires: new Date(Date.now() + 8 * 3600000),
-      }); // here we pass the cookie name as a token and then pass the token
-      res.send("User Logged In Successfully");
-    } else {
-      throw new Error("Invalid Credentials");
-    }
-  } catch (err) {
-    res.status(400).send("Error:" + err.message);
-  }
-});
-
-//create profile API
-
-app.get("/profile", userAuth, async (req, res) => {
-  try {
-    const user = req.user; // here i will just find the user from userAuth beause we attach the user with req
-
-    //so the profile api just send back my user
-    res.send(user);
-  } catch (err) {
-    res.status(400).send("ERROR:" + err.message);
-  }
-});
-
-//sent connection request
-app.post("/sendConnectionRequest", userAuth, async (req, res) => {
-  //sending a connection request
-  const user = req.user;
-  console.log("Sending a connection request");
-  res.send(` ${user.firstName} sent the connection request!!`);
-});
+app.use("/", authRouter);
+app.use("/", profileRouter);
+app.use("/", requestRouter);
 
 connectDB()
   .then(() => {
