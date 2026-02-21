@@ -6,13 +6,13 @@
     "backend",
     "node.js"
   ],
-  "homepage": "https://github.com/twinkle-mahato/Backend.git#readme",
+  "homepage": "https://github.com/twinkle-mahato/DevTinder-Backend.git.git#readme",
   "bugs": {
-    "url": "https://github.com/twinkle-mahato/Backend.git/issues"
+    "url": "https://github.com/twinkle-mahato/DevTinder-Backend.git/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/twinkle-mahato/Backend.git"
+    "url": "https://github.com/twinkle-mahato/DevTinder-Backend.git"
   },
   "license": "ISC",
   "author": "Twinkle Mahato",
