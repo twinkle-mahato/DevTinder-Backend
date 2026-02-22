@@ -11,10 +11,11 @@
 - PATCH /profile/password //Forgot Password Api
 
 ## connectionRequestRouter
-- POST /request/send/intrested/:userId
+- POST /request/send/:status/:userId
+- here status should be interested & ignored
 
-- POST /request/review/accepted/:requestId
-- POST /request/review/rejected/:requestId
+- POST /request/review/:status/:requestId 
+- here status should be accepted & rejected
 
 
 ## userRouter
