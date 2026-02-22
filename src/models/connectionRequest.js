@@ -4,6 +4,7 @@ const connectionRequestSchema = new mongoose.Schema(
   {
     fromUserId: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // reference to the User collection
       required: true,
     },
     toUserId: {
@@ -26,9 +27,9 @@ const connectionRequestSchema = new mongoose.Schema(
 
 //connectionRequestSchema.index({fromUserId:3427387340948390, toUserId:398275903030823935290});
 
-connectionRequestSchema.index({fromUserId:1, toUserId:1});
+connectionRequestSchema.index({ fromUserId: 1, toUserId: 1 });
 
-connectionRequestSchema.pre("save", async function() {
+connectionRequestSchema.pre("save", async function () {
   const connectionRequest = this;
 
   //check if the fromUserId is same as toUserId
