@@ -2,6 +2,7 @@ const express = require("express");
 const { userAuth } = require("../middlewares/auth");
 const userRouter = express.Router();
 const connectionRequestModel = require("../models/connectionRequest");
+const User = require("../models/user");
 
 // get all the pending connection request for the loggedIn user received
 
@@ -65,6 +66,59 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
     });
   } catch (err) {
     res.status(400).send("Error:" + err.message);
+  }
+});
+
+//feed
+userRouter.get("/user/feed", userAuth, async (req, res) => {
+  try {
+    // User should see all the user cards expect
+    // 0. His own Cards
+    // 1. his connections
+    // 2. ignored people
+    // 3. already sent the connection request
+
+    const loggedInUser = req.user;
+
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    limit = limit > 50 ? 50 : limit;
+    const skip = (page - 1) * limit;
+
+    // find out all the connection request (sent + received) for a user who is logged in
+    const connectionRequests = await connectionRequestModel
+      .find({
+        $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
+      })
+      .select("fromUserId toUserId");
+
+    const hideUsersFromFeed = new Set();
+
+    connectionRequests.forEach((req) => {
+      hideUsersFromFeed.add(req.fromUserId.toString());
+      hideUsersFromFeed.add(req.toUserId.toString());
+    });
+
+    // console.log(hideUsersFromFeed);
+
+    // this is data which show in the feed
+    //  Fetch users who:
+    // - Are NOT in hideUsersFromFeed list
+    // - Are NOT the logged-in user
+    const users = await User.find({
+      $and: [
+        { _id: { $nin: Array.from(hideUsersFromFeed) } }, //here we make db call and finding all the people whose id not present in my hideUsersFrommFeed Array and thatid we show in the feed
+
+        { _id: { $ne: loggedInUser._id } }, // and i also do not want the loggedIn user card
+      ],
+    })
+      .select(USER_SAFE_DATA)
+      .skip(skip)
+      .limit(limit);
+
+    res.send({ data: users });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 });
 
