@@ -55,7 +55,7 @@ authRouter.post("/login", async (req, res) => {
       res.cookie("token", token, {
         expires: new Date(Date.now() + 8 * 3600000),
       }); // here we pass the cookie name as a token and then pass the token
-      res.send("User Logged In Successfully");
+      res.send(user);
     } else {
       throw new Error("Invalid Credentials");
     }

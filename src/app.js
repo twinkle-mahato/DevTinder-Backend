@@ -5,7 +5,12 @@ const app = express();
 const cookieparser = require("cookie-parser");
 const cors = require("cors");
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173/",
+    credentials: true,
+  }),
+);
 //our middleware now be activated for all the routes
 app.use(cookieparser()); // to read and parse cookies from incoming requests.
 app.use(express.json()); //parse incoming JSON request bodies and make the data accessible
