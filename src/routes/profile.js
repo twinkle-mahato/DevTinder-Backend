@@ -11,7 +11,7 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
     const user = req.user; // here i will just find the user from userAuth beause we attach the user with req
 
     //so the server send response back as a user
-    res.send("Profile fetched successfully.");
+    res.send(user);
   } catch (err) {
     res.status(400).send("Error : " + err.message);
   }
