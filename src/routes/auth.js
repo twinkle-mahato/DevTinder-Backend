@@ -26,9 +26,9 @@ authRouter.post("/signup", async (req, res) => {
       password: passwordHash,
     });
     await user.save();
-    res.send("User added Successfully");
+    res.send("User registered successfully");
   } catch (err) {
-    res.status(400).send("Error:" + err.message);
+    res.status(400).send("Error : " + err.message);
   }
 });
 
@@ -60,15 +60,15 @@ authRouter.post("/login", async (req, res) => {
       throw new Error("Invalid Credentials");
     }
   } catch (err) {
-    res.status(400).send("Error:" + err.message);
+    res.status(400).send("Error : " + err.message);
   }
 });
 
 authRouter.post("/logout", async (req, res) => {
   await res.cookie("token", null, {
-    expires: new Date(Date.now()),  //i am setting the expiry time as the current time
+    expires: new Date(Date.now()), //i am setting the expiry time as the current time
   });
-  res.send("Logout Successfull");
+  res.send("Logged out successfully");
 });
 
 module.exports = authRouter;

@@ -9,7 +9,10 @@ const userAuth = async (req, res, next) => {
     const { token } = cookies;
 
     if (!token) {
-      return res.status(401).send("Please login!");
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required. Please log in.",
+      });
     }
 
     //validate the cookie
@@ -22,13 +25,16 @@ const userAuth = async (req, res, next) => {
     const user = await User.findById(_id);
 
     if (!user) {
-      throw new Error("User not found");
+      return res.status(401).json({
+        success: false,
+        message: "User not found. Please log in again.",
+      });
     }
 
     req.user = user; // so whatever the user i found on the database i will just attach with the request and i call the next()
     next();
   } catch (err) {
-    res.status(400).send("Error:" + err.message);
+    res.status(400).send("Error : " + err.message);
   }
 };
 

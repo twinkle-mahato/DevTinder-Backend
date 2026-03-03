@@ -11,9 +11,9 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
     const user = req.user; // here i will just find the user from userAuth beause we attach the user with req
 
     //so the server send response back as a user
-    res.send(user);
+    res.send("Profile fetched successfully.");
   } catch (err) {
-    res.status(400).send("ERROR:" + err.message);
+    res.status(400).send("Error : " + err.message);
   }
 });
 
@@ -21,7 +21,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   try {
     //if the profile data is not valid
     if (!validateEditProfileData(req)) {
-      throw new Error("Invalid Edit Request!!");
+      throw new Error("Profile update request is not valid.");
     }
 
     const loggedInUser = req.user;
@@ -38,7 +38,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
       data: loggedInUser,
     });
   } catch (err) {
-    res.status(400).send("Error:" + err.message);
+    res.status(400).send("An unexpected error occurred.");
   }
 });
 

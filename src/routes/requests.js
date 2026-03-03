@@ -27,14 +27,14 @@ requestRouter.post(
 
       if (!allowedStatus.includes(status)) {
         return res.status(400).json({
-          message: "Invalid Status Type:" + status,
+          message: "Invalid request status provided : " + status,
         });
       }
       // check if the user we are sending request to actually exists
       const toUser = await User.findById(toUserId);
       if (!toUser) {
         return res.status(400).json({
-          message: "User not found!!",
+          message: "Recipient user not found.",
         });
       }
       // check if a connection request already exists
@@ -47,7 +47,7 @@ requestRouter.post(
       });
       if (existingConnectionRequest) {
         return res.status(400).send({
-          message: "Connection Request Alreday Exist!!",
+          message: "Connection request alreday exist.",
         });
       }
 
@@ -73,7 +73,7 @@ requestRouter.post(
         data,
       });
     } catch (err) {
-      res.status(400).send("Error:" + err.message);
+      res.status(400).send("Error : " + err.message);
     }
   },
 );
@@ -102,9 +102,9 @@ requestRouter.post(
       // 1. Request ID must match
       // 2. Logged-in user must be the receiver (toUserId)
       // 3. Current status must be 'interested'
-      const connectionRequest =  await connectionRequestModel.findOne({
+      const connectionRequest = await connectionRequestModel.findOne({
         _id: requestId,
-         toUserId : loggedInUser._id,
+        toUserId: loggedInUser._id,
         status: "interested",
       });
 
@@ -124,11 +124,11 @@ requestRouter.post(
 
       //return response after save
       res.json({
-        message: "Connection request" + " " + status ,
+        message: "Connection request" + " " + status,
         data,
       });
     } catch (err) {
-      res.status(400).send("Error:" + err.message);
+      res.status(400).send("Error : " + err.message);
     }
   },
 );
