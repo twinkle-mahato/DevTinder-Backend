@@ -9,7 +9,7 @@ const userAuth = async (req, res, next) => {
     const { token } = cookies;
 
     if (!token) {
-      throw new Error("Token is invalid");
+      return res.status(401).send("Please login!");
     }
 
     //validate the cookie
@@ -20,18 +20,18 @@ const userAuth = async (req, res, next) => {
 
     // it will give you the all information about the user
     const user = await User.findById(_id);
-     
+
     if (!user) {
       throw new Error("User not found");
     }
 
-     req.user = user; // so whatever the user i found on the database i will just attach with the request and i call the next()
+    req.user = user; // so whatever the user i found on the database i will just attach with the request and i call the next()
     next();
   } catch (err) {
-    res.status(400).send("Error:"+ err.message);
+    res.status(400).send("Error:" + err.message);
   }
 };
 
 module.exports = {
-  userAuth
+  userAuth,
 };
