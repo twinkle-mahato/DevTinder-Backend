@@ -10,7 +10,7 @@ const User = require("../models/user");
 // where the logged-in user is the receiver
 // and the status is still "interested" (pending)
 
-const USER_SAFE_DATA = "firstName lastName photoUrl gender skills";
+const USER_SAFE_DATA = "firstName lastName photoUrl about gender skills";
 
 userRouter.get("/user/request/received", userAuth, async (req, res) => {
   try {
