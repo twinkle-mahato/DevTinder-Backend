@@ -9,8 +9,11 @@ app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
 //our middleware now be activated for all the routes
 app.use(cookieparser()); // to read and parse cookies from incoming requests.
 app.use(express.json()); //parse incoming JSON request bodies and make the data accessible

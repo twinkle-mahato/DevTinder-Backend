@@ -4,7 +4,7 @@ const User = require("../models/user");
 // Middleware to handle authorization for all /user requests
 const userAuth = async (req, res, next) => {
   try {
-    const cookies = req.cookies;
+    const cookies = req?.cookies;
     //extarct the token from cookis
     const { token } = cookies;
 

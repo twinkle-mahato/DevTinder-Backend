@@ -38,7 +38,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
       data: loggedInUser,
     });
   } catch (err) {
-    res.status(400).send("An unexpected error occurred.");
+    res.status(400).send("Error : " + err.message);
   }
 });
 
