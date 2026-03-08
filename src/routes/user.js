@@ -28,7 +28,7 @@ userRouter.get("/user/request/received", userAuth, async (req, res) => {
       data: connectionRequest,
     });
   } catch (err) {
-    res.status(400).send("Error : " + err.message);
+   res.status(400).json({ message: err.message })
   }
 });
 
@@ -48,7 +48,7 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       .populate("fromUserId", USER_SAFE_DATA)
       .populate("toUserId", USER_SAFE_DATA);
 
-    console.log(connectionRequests);
+    // console.log(connectionRequests);
 
     // Extract only the connected user's profile from each accepted connection.
     // If the logged-in user is the sender (fromUserId),
@@ -65,7 +65,7 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       data,
     });
   } catch (err) {
-    res.status(400).send("Error : " + err.message);
+    res.status(400).json({ message: err.message })
   }
 });
 

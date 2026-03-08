@@ -63,7 +63,7 @@ const userSchema = mongoose.Schema(
     photoUrl: {
       type: String,
       default:
-        "https://img.freepik.com/premium-photo/simplistic-avatar-design-featuring-flatstyle-profile-icon-user-representation-perfect_1283595-13136.jpg?w=360",
+        "https://img.freepik.com/premium-vector/silver-membership-icon-default-avatar-profile-icon-membership-icon-social-media-user-image-vector-illustration_561158-4195.jpg?semt=ais_rp_50_assets&w=740&q=80",
       validate(value) {
         if (value && !validator.isURL(value)) {
           throw new Error("Photo URL is not valid:" + value);

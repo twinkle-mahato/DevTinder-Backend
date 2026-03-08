@@ -47,7 +47,7 @@ requestRouter.post(
       });
       if (existingConnectionRequest) {
         return res.status(400).send({
-          message: "Connection request alreday exist.",
+          message: "Connection request already exist.",
         });
       }
 
@@ -73,7 +73,7 @@ requestRouter.post(
         data,
       });
     } catch (err) {
-      res.status(400).send("Error : " + err.message);
+      res.status(400).json({ message: err.message });
     }
   },
 );
@@ -128,7 +128,7 @@ requestRouter.post(
         data,
       });
     } catch (err) {
-      res.status(400).send("Error : " + err.message);
+      res.status(400).json({ message: err.message });
     }
   },
 );

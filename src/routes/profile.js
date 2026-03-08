@@ -8,16 +8,15 @@ const { validateEditProfileData } = require("../utils/validation");
 
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
-    const user = req.user; // here i will just find the user from userAuth beause we attach the user with req
-
-    //so the server send response back as a user
+    const user = req.user; 
+    //  server send response back as a user
     res.send(user);
   } catch (err) {
-    res.status(400).send("Error : " + err.message);
+    res.status(400).json({ message: err.message });
   }
 });
 
-profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
+profileRouter.put("/profile/edit", userAuth, async (req, res) => {
   try {
     //if the profile data is not valid
     if (!validateEditProfileData(req)) {
@@ -38,7 +37,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
       data: loggedInUser,
     });
   } catch (err) {
-    res.status(400).send("Error : " + err.message);
+    res.status(400).json({ message: err.message });
   }
 });
 
