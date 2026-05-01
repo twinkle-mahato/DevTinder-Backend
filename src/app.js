@@ -1,9 +1,11 @@
+require("dotenv").config();
 const express = require("express");
 const { connectDB } = require("./config/database");
 
 const app = express();
 const cookieparser = require("cookie-parser");
 const cors = require("cors");
+
 
 app.use(
   cors({
@@ -30,8 +32,8 @@ connectDB()
   .then(() => {
     console.log("connected to database");
     // start the server only after database connection is successful
-    app.listen(7777, () => {
-      console.log("Server is successfully listening on port 7777");
+    app.listen(process.env.PORT, () => {
+      console.log(`Server is successfully listening on port ${process.env.PORT}`);
     });
   })
   .catch((err) => {

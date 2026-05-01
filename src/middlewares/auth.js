@@ -16,7 +16,7 @@ const userAuth = async (req, res, next) => {
     }
 
     //validate the cookie
-    const decodedData = await jwt.verify(token, "Dev#Tinder@123");
+    const decodedData = await jwt.verify(token,process.env.JWT_SECRET );
 
     //from the decodedData extract the userId
     const { _id } = decodedData;
