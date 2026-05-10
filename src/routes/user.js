@@ -28,7 +28,7 @@ userRouter.get("/user/request/received", userAuth, async (req, res) => {
       data: connectionRequest,
     });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+   res.status(400).json({ message: err.message })
   }
 });
 
@@ -65,7 +65,7 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       data,
     });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: err.message })
   }
 });
 
@@ -115,12 +115,6 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
       .select(USER_SAFE_DATA)
       .skip(skip)
       .limit(limit);
-
-    console.log("Logged in user ID:", loggedInUser._id);
-    console.log(
-      "Feed users:",
-      users.map((u) => ({ id: u._id, name: u.firstName })),
-    );
 
     res.json({ data: users });
   } catch (err) {
