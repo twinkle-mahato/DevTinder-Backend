@@ -32,8 +32,8 @@ authRouter.post("/signup", async (req, res) => {
     res.cookie("token", token, {
       expires: new Date(Date.now() + 8 * 3600000),
       httpOnly: true,
-      sameSite: "None",
-      secure: true,
+      secure: false,
+      sameSite: "lax",
     });
 
     res.json({ message: "User registered successfully!", data: savedUser });
@@ -65,8 +65,8 @@ authRouter.post("/login", async (req, res) => {
       res.cookie("token", token, {
         expires: new Date(Date.now() + 8 * 3600000),
         httpOnly: true,
-        sameSite: "None",
-        secure: true,
+        secure: false,
+        sameSite: "lax",
       }); // here we pass the cookie name as a token and then pass the token
       res.send(user);
     } else {
@@ -81,8 +81,8 @@ authRouter.post("/logout", async (req, res) => {
   await res.cookie("token", null, {
     expires: new Date(Date.now()), //i am setting the expiry time as the current time
     httpOnly: true,
-    sameSite: "None",
-    secure: true,
+    secure: false,
+    sameSite: "lax",
   });
   res.send("Logged out successfully");
 });
