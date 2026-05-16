@@ -9,7 +9,7 @@ const cors = require("cors");
 
 app.use(
   cors({
-    origin: "https://dev-tinder-frontend-project.vercel.app",
+    origin: "http://localhost:5173",
     credentials: true,
   }),
 );
@@ -33,7 +33,9 @@ connectDB()
     console.log("connected to database");
     // start the server only after database connection is successful
     app.listen(process.env.PORT, () => {
-      console.log(`Server is successfully listening on port ${process.env.PORT}`);
+      console.log(
+        `Server is successfully listening on port ${process.env.PORT}`,
+      );
     });
   })
   .catch((err) => {
